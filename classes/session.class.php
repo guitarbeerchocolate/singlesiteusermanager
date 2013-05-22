@@ -12,12 +12,12 @@ class session
 		if(!isset($_SESSION)) 
 	    { 
 	        session_start(); 
-	    }
-		$this->userid = NULL;
+	        $this->userid = NULL;
 		$this->username = NULL;
 		$this->messagename = NULL;
 		$this->message = NULL;
-		$this->sessid = session_id();
+	    }
+	$this->sessid = session_id();
 	}
 
 	function setUserSession($userid, $username)
