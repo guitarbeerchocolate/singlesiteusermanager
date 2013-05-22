@@ -19,10 +19,17 @@ class config
 		{
 			$tempArr = explode(' = ',$line);
 			$key = trim($tempArr[0]);
-			$value = trim($tempArr[1]);
+			if(isset($tempArr[1]))
+			{
+				$value = trim($tempArr[1]);
+			}
+			else
+			{
+				$value = NULL;
+			}
 			if(!isset($key) || !empty($key))
 			{
-				$this->values->{$key} = $value;
+				@$this->values->{$key} = $value;
 			}
 			unset($tempArr);
 		}
