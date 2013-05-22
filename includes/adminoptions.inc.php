@@ -11,17 +11,20 @@
 			<?php
 			foreach($config->listvalues() as $key => $value)
 			{
-				echo '<label for="'.$key.'">'.$key.'</label>';
+				if(($key != 'DB_TYPE') && ($key != 'DB_HOST') && ($key != 'DB_USERNAME') && ($key != 'DB_PASSWORD') && ($key != 'DB_NAME'))
+				{
+					echo '<label for="'.$key.'">'.$key.'</label>'.PHP_EOL;
+				}
 				if($key == 'AUTO_REGISTER')
 				{
-					echo '<select name="'.$key.'">';
+					echo '<select name="'.$key.'">'.PHP_EOL;
 					echo '<option value="TRUE"';
 					if($value == 'TRUE') echo 'SELECTED';
-					echo '>TRUE</option>';
+					echo '>TRUE</option>'.PHP_EOL;
 					echo '<option value="FALSE"';
 					if($value == 'FALSE') echo 'SELECTED';
-					echo '>FALSE</option>';
-					echo '</select>';
+					echo '>FALSE</option>'.PHP_EOL;
+					echo '</select>'.PHP_EOL;
 				}
 				else
 				{
@@ -42,6 +45,10 @@
 					{
 						echo 'url';
 					}
+					elseif(($parsedKey == 'DB_TYPE') || ($parsedKey == 'DB_HOST') || ($parsedKey == 'DB_USERNAME') || ($parsedKey == 'DB_PASSWORD') || ($parsedKey == 'DB_NAME'))
+					{
+						echo 'hidden';
+					}
 					else
 					{
 						echo 'text';
@@ -49,7 +56,7 @@
 					echo '" name="'.$parsedKey.'" class="input-block-level" ';
 					if(isset($value) || !empty($value))	echo 'value="'.$value.'"';
 					if($parsedKey != 'DB_PASSWORD') echo ' required';
-					echo ' />';
+					echo ' />'.PHP_EOL;
 				}
 			}
 			?>
