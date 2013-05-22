@@ -26,6 +26,8 @@ include_once 'includes/privatesetup.inc.php';
 	{
 		include 'includes/adminoptions.inc.php';
 	}
+	session_regenerate_id(true);
+	session_write_close();
 	?>
 	</body>
 </html>
