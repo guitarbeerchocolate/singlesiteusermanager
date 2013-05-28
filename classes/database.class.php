@@ -4,9 +4,16 @@ class database
 	private $config;
 	private $connection;
 
-	function __construct()
+	function __construct($file = NULL)
 	{
-		$this->config = new config;
+		if($file != NULL)
+		{
+			$this->config = new config($file);
+		}
+		else
+		{
+			$this->config = new config;
+		}		
 		$this->connection = mysql_connect($this->config->values->DB_HOST, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD) or die('Connection to host failed.'.mysql_error());
 		mysql_select_db($this->config->values->DB_NAME) or die('Database is not available.');
 	}
@@ -19,10 +26,19 @@ class database
 	} */
 	public function query($q)
 	{
-		$result = mysql_query($q);
-		if (!$result)
+		$results = mysql_query($q, $this->connection);
+		if(!$results)
 		{
-    		die('Invalid query: ' . mysql_error());
+    		die('Invalid query: '.mysql_error());
+		}
+		else
+		{
+			$objArray = array();
+			while($row = mysql_fetch_assoc($results))
+			{
+				array_push($objArray, (object) $row);
+			}
+			return $objArray;
 		}
 	}
 

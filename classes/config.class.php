@@ -4,9 +4,16 @@ class config
 	public $values = NULL;
 	private $file = NULL;
 	private $fileLocation = NULL;
-	function __construct()
+	function __construct($file = NULL)
 	{
-		$this->fileLocation = 'classes/config.ini';
+		if($file != NULL)
+		{
+			$this->fileLocation = 'classes/'.$file.'.ini';
+		}
+		else
+		{
+			$this->fileLocation = 'classes/config.ini';
+		}
 		$tempArr = array();
 		$this->file = file_get_contents($this->fileLocation);
 		$tempArr = explode("\n", $this->file);

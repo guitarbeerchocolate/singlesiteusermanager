@@ -18,6 +18,15 @@ include_once 'includes/privatesetup.inc.php';
 	<?php
 	echo 'session name = '.$session->username.'<br />';
 	echo 'session is = '.$session->sessid.'<br />';
+	$db2 = new database('parent');
+	$results = $db2->query("SELECT * FROM `articles`");
+	if(isset($results))
+	{
+		foreach($results as $row)
+		{
+			echo $row->title.'<br />';
+		}
+	}
 	?>
 	<?php
 	/* Admin panel for managing the site */
