@@ -7,6 +7,11 @@
 			font:100%/1.618 sans-serif;
 			color:#666666;
 		}
+    label, button
+    {
+      display:block;
+      clear:both;
+    }
 		</style>
 	</head>
 	<body>

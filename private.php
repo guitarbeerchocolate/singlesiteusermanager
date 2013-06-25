@@ -12,21 +12,26 @@ include_once 'includes/privatesetup.inc.php';
 			font:100%/1.618 sans-serif;
 			color:#666666;
 		}
+		label, button
+		{
+			display:block;
+			clear:both;
+		}
 		</style>
 	</head>
 	<body>
 	<?php
 	echo 'session name = '.$session->username.'<br />';
 	echo 'session is = '.$session->sessid.'<br />';
-	$db2 = new database('parent');
-	$results = $db2->query("SELECT * FROM `articles`");
-	if(isset($results))
-	{
-		foreach($results as $row)
-		{
-			echo $row->title.'<br />';
-		}
-	}
+	// $db2 = new database('parent');
+	// $results = $db2->query("SELECT * FROM `articles`");
+	// if(isset($results))
+	// {
+	// 	foreach($results as $row)
+	// 	{
+	// 		echo $row->title.'<br />';
+	// 	}
+	// }
 	?>
 	<?php
 	/* Admin panel for managing the site */

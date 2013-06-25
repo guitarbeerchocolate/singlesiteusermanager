@@ -3,64 +3,38 @@ class database
 {
 	private $config;
 	private $connection;
-
-	function __construct($file = NULL)
+	function __construct()
 	{
-		if($file != NULL)
-		{
-			$this->config = new config($file);
-		}
-		else
-		{
-			$this->config = new config;
-		}		
-		$this->connection = mysql_connect($this->config->values->DB_HOST, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD) or die('Connection to host failed.'.mysql_error());
-		mysql_select_db($this->config->values->DB_NAME) or die('Database is not available.');
+		$this->config = new config;
+		$link = mysql_connect($this->config->values->DB_HOST, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD);
+		$this->connection = mysql_select_db($this->config->values->DB_NAME);
 	}
 
-	/* Example usage
-	$results = $db->query("SELECT * FROM `users`");
-	foreach($results as $row)
+	function query($q)
 	{
-		echo $row->id.'<br />';
-	} */
-	public function query($q)
-	{
-		$results = mysql_query($q, $this->connection);
-		if(!$results)
+		$objArray = array();
+		$result = mysql_query($q);
+		while($row = mysql_fetch_object($result))
 		{
-    		die('Invalid query: '.mysql_error());
+			array_push($objArray, $row);
 		}
-		else
-		{
-			$objArray = array();
-			while($row = mysql_fetch_assoc($results))
-			{
-				array_push($objArray, (object) $row);
-			}
-			return $objArray;
-		}
+		return (object) $objArray;
 	}
 
-	/* Example usage
-	$result = $db->singleRow("SELECT * FROM `users` WHERE `id`='2'");
-	echo $result->username;
-	*/
-	public function singleRow($q)
+	function singleRow($q)
 	{
 		$result = mysql_query($q);
-		$this->row = mysql_fetch_assoc($result);
-		return (object) $this->row;
+		return mysql_fetch_object($result);
 	}
 
-	public function lastAdded()
+	function lastAdded()
 	{
 		return mysql_insert_id();
 	}
 
 	function __destruct()
 	{
-		$this->connection = NULL;
+		mysql_close();
 	}
 }
 ?>
