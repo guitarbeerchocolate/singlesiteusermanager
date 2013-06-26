@@ -3,28 +3,39 @@ class database
 {
 	private $config;
 	private $connection;
+	private $pdoString;
 	function __construct()
 	{
 		$this->config = new config;
-		$link = mysql_connect($this->config->values->DB_HOST, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD);
-		$this->connection = mysql_select_db($this->config->values->DB_NAME);
+		$this->config->values->DB_TYPE;
+		$this->pdoString = $this->config->values->DB_TYPE;
+		$this->pdoString .= ':dbname='.$this->config->values->DB_NAME;
+		$this->pdoString .= ';host='.$this->config->values->DB_HOST;
+		$this->connection = new PDO($this->pdoString, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD);
 	}
 
-	function query($q)
+	/* Example usage
+	$results = $db->query("SELECT * FROM `users`");
+	foreach($results as $row)
 	{
-		$objArray = array();
-		$result = mysql_query($q);
-		while($row = mysql_fetch_object($result))
-		{
-			array_push($objArray, $row);
-		}
-		return (object) $objArray;
+		echo $row->id.'<br />';
+	} */
+	public function query($q)
+	{
+		$statement = $this->connection->query($q);
+		$statement->setFetchMode(PDO::FETCH_OBJ);
+		return $statement->fetchAll();
 	}
 
-	function singleRow($q)
+	/* Example usage
+	$result = $db->singleRow("SELECT * FROM `users` WHERE `id`='2'");
+	echo $result->username;
+	*/
+	public function singleRow($q)
 	{
-		$result = mysql_query($q);
-		return mysql_fetch_object($result);
+		$sth = $this->connection->prepare($q);
+		$sth->execute();
+		return (object)  $sth->fetch();
 	}
 
 	function lastAdded()
@@ -34,7 +45,7 @@ class database
 
 	function __destruct()
 	{
-		mysql_close();
+		$this->connection = NULL;
 	}
 }
 ?>

@@ -1,4 +1,4 @@
-<form id="selfregisterform" class="form-signin form-horizontal" action="httphandler.class.php" method="POST">
+<form action="httphandler.class.php" method="POST">
     <fieldset>
     <legend>Self registration</legend>
         <input name="method" type="hidden" value="selfregister" />

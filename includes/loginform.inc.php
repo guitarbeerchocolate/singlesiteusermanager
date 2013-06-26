@@ -1,4 +1,4 @@
-<form id="loginform" class="form-signin form-horizontal" action="httphandler.class.php" method="POST">
+<form action="httphandler.class.php" method="POST">
 	<fieldset>
 		<legend>Please sign in</legend>
 		<input name="method" type="hidden" value="login" />

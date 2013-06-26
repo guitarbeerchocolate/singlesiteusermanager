@@ -1,17 +1,14 @@
 <?php
+session_regenerate_id(true);
 $session = new session;
 $session->getUserSession();
 if(!isset($session->username))
 {
 	$session->destroyUserSession();
-	header('Location:index.php');
+	$headerString = 'Location:';
+	$headerString .= 'index.php?message=';
+	$headerString .= urlencode('Who are you?');
+	header($headerString);
 }
-if(isset($_GET['sessionid']))
-{
-	$session->sessid = $_GET['sessionid'];
-}
-else
-{
-	header('Location:index.php');
-}
+session_write_close();
 ?>

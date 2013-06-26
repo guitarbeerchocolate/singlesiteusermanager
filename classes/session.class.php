@@ -4,8 +4,6 @@ class session
 {
 	public $userid;
 	public $username;
-	public $messagename;
-	public $message;
 	public $sessid;
 	function __construct()
 	{
@@ -13,9 +11,7 @@ class session
 	    { 
 	        session_start(); 
 	        $this->userid = NULL;
-		$this->username = NULL;
-		$this->messagename = NULL;
-		$this->message = NULL;
+			$this->username = NULL;
 	    }
 	$this->sessid = session_id();
 	}
@@ -46,41 +42,12 @@ class session
 		$this->username = NULL;
 		unset($_SESSION['USER_ID']);
 		unset($_SESSION['USER_NAME']);
-	}
-
-	function setMessageSession($messagename, $message)
-	{
-		$this->messagename = $messagename;
-		$this->message = $message;
-		$_SESSION['MESSAGE_NAME'] = $this->messagename;   
-		$_SESSION['MESSAGE_CONTENT'] = $this->message;
-	}
-
-	function getMessageSession()
-	{
-		if(isset($_SESSION['MESSAGE_NAME']))
-		{
-			$this->messagename = $_SESSION['MESSAGE_NAME'];
-		}
-		if(isset($_SESSION['MESSAGE_CONTENT']))
-		{
-			$this->message = $_SESSION['MESSAGE_CONTENT'];
-		}
-	}
-
-	function destroyMessageSession()
-	{
-		$this->messagename = NULL;
-		$this->message = NULL;
-		unset($_SESSION['MESSAGE_ID']);
-		unset($_SESSION['MESSAGE_CONTENT']);
-	}
+	}	
 
 	function __destruct()
 	{
 		$this->sessid = NULL;
 		$this->destroyUserSession();
-		$this->destroyMessageSession();
 	}
 }
 ?>

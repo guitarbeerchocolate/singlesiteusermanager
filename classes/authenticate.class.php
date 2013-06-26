@@ -18,7 +18,7 @@ class authenticate
 
   function login($u, $p)
   {
-    $this->username = mysql_escape_string($u);
+    $this->username = mysql_real_escape_string($u);
     $this->password = md5($p);
     $q = "SELECT * FROM `users` WHERE `username`='{$this->username}' AND `password`='{$this->password}'";
     $result = $this->db->singleRow($q);
@@ -27,18 +27,18 @@ class authenticate
       $this->id = $result->id;
       $this->username = $result->username;
       $this->session->setUserSession($this->id, $result->username);
-      return 'private.php?sessionid='.$this->session->sessid;
+      return 'private';
     }
     else
     {
       $this->session->destroyUserSession();
-      return 'index.php';
+      return;
     }
   }
 
   function requestpasswordreset($u)
   {
-    $this->username = mysql_escape_string($u);
+    $this->username = mysql_real_escape_string($u);
     $q = "SELECT * FROM `users` WHERE `username`='{$this->username}'";
     $result = $this->db->singleRow($q);
     if(isset($result->id))
@@ -56,13 +56,13 @@ class authenticate
     $nextPage = 'index.php';
     if($this->config->values->AUTO_REGISTER == 'TRUE')
     {
-      $id = $this->autoregister(mysql_escape_string($u), $pwd);
+      $id = $this->autoregister(mysql_real_escape_string($u), mysql_real_escape_string($pwd));
       $this->session->setUserSession($id, $u);
-      $nextPage = 'private.php?sessionid='.$this->session->sessid;
+      $nextPage = 'private';
     }
     else
     {
-      $id = $this->registerwaiting(mysql_escape_string($u), $pwd);
+      $id = $this->registerwaiting(mysql_real_escape_string($u), mysql_real_escape_string($pwd));
       $email = new electronicmail;
       $email->to = $this->config->values->AUTHORISING_USER;
       $email->from = $this->config->values->MAILBOX_NAME;
@@ -70,11 +70,25 @@ class authenticate
       $email->textmessage = 'Hello'.PHP_EOL;
       $email->textmessage .= 'A user taken part in the self-registration process.'.PHP_EOL;
       $email->textmessage .= 'Click or paste the link into your browsers address bar to verify access.'.PHP_EOL;
-      $email->textmessage .= $this->config->values->WEB_LOCATION.'?vid='.$id.'&usr='.$u.'&pwd='.$pwd.PHP_EOL;
+      $email->textmessage .= $this->config->values->WEB_LOCATION.'verify?vid='.$id.'&usr='.$u.'&pwd='.$pwd.PHP_EOL;
       $email->textmessage .= 'Admin.'.PHP_EOL;
       $email->sendemail();
     }
     return $nextPage;
+  }
+
+  function checkBeforeMove($usr, $pwd)
+  {
+    $q = "SELECT * FROM `waiting` WHERE `username`='{$usr}' AND `password`='{$pwd}'";
+    $result = $this->db->singleRow($q);
+    if($result->id)
+    {
+      return TRUE;
+    }
+    else
+    {
+      return FALSE;
+    }
   }
 
   function movefromwaitingtousers($id, $usr, $pwd)
@@ -97,18 +111,18 @@ class authenticate
 
   function testForReset($id, $username, $pwd)
   {
-      $this->id = mysql_escape_string($id);
-      $this->username = mysql_escape_string($username);
-      $this->password = mysql_escape_string($pwd);
+      $this->id = mysql_real_escape_string($id);
+      $this->username = mysql_real_escape_string($username);
+      $this->password = mysql_real_escape_string($pwd);
       $q = "SELECT * FROM `users` WHERE `id`='{$this->id}' AND `username`='{$this->username}' AND `password`='{$this->password}'";
       return $this->db->singleRow($q);
   }
 
   function resetpassword($id, $username, $pwd)
   {
-    $this->id = mysql_escape_string($id);
-    $this->username = mysql_escape_string($username);
-    $this->password = md5($pwd);
+    $this->id = mysql_real_escape_string($id);
+    $this->username = mysql_real_escape_string($username);
+    $this->password = mysql_real_escape_string(md5($pwd));
     $q = "UPDATE `users` SET `password`='{$this->password}' WHERE `id`='{$this->id}' AND `username`='{$this->username}'";
     return $this->db->singleRow($q);
   }
@@ -116,7 +130,7 @@ class authenticate
   function autoregister($u, $pwd)
   {
     $q = "INSERT INTO `users` VALUES (NULL, '{$u}','{$pwd}')";
-    $this->db->singleRow($q);
+    $result = $this->db->singleRow($q);
     return $this->db->lastAdded();
   }
 
