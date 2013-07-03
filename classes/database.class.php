@@ -3,49 +3,52 @@ class database
 {
 	private $config;
 	private $connection;
-	private $pdoString;
 	function __construct()
 	{
 		$this->config = new config;
-		$this->config->values->DB_TYPE;
-		$this->pdoString = $this->config->values->DB_TYPE;
-		$this->pdoString .= ':dbname='.$this->config->values->DB_NAME;
-		$this->pdoString .= ';host='.$this->config->values->DB_HOST;
-		$this->connection = new PDO($this->pdoString, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD);
+		if(is_null($this->config->values->DB_PASSWORD) || empty($this->config->values->DB_PASSWORD) || !isset($this->config->values->DB_PASSWORD) || !property_exists($this->config, 'values->DB_PASSWORD'))
+		{
+			$this->config->values->DB_PASSWORD = '';
+		}
+		$this->connection = new mysqli($this->config->values->DB_HOST, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD, $this->config->values->DB_NAME);
 	}
 
-	/* Example usage
-	$results = $db->query("SELECT * FROM `users`");
-	foreach($results as $row)
+	function query($q)
 	{
-		echo $row->id.'<br />';
-	} */
-	public function query($q)
-	{
-		$statement = $this->connection->query($q);
-		$statement->setFetchMode(PDO::FETCH_OBJ);
-		return $statement->fetchAll();
+		$objArray = array();
+		if($result = $this->connection->query($q))
+		{
+			while($obj = $result->fetch_object())
+		    {
+				array_push($objArray,$obj);
+		    }
+			$result->close();
+		}
+		return (object) $objArray;
 	}
 
-	/* Example usage
-	$result = $db->singleRow("SELECT * FROM `users` WHERE `id`='2'");
-	echo $result->username;
-	*/
-	public function singleRow($q)
+	function singleRow($q)
 	{
-		$sth = $this->connection->prepare($q);
-		$sth->execute();
-		return (object)  $sth->fetch();
+		$result = $this->connection->query($q);
+		if(!is_bool($result))
+		{
+			return $result->fetch_object();
+		}
+	}
+
+	function escape($s)
+	{
+		return $this->connection->real_escape_string($s);
 	}
 
 	function lastAdded()
 	{
-		return mysql_insert_id();
+		return $this->connection->insert_id;
 	}
 
 	function __destruct()
 	{
-		$this->connection = NULL;
+		$this->connection->close();
 	}
 }
 ?>

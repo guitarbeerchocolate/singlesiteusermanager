@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors',1);
+ini_set('display_startup_errors',1);
+error_reporting(-1);
 require_once 'classes/autoload.php';
 class httphandler
 {
@@ -159,7 +162,6 @@ class httphandler
     }
     else
     {
-      $pwd = md5($this->postObject->password1);
       /* Check if the user already exists */
       if($auth->userAlreadyExists($this->postObject->username) == TRUE)
       {
@@ -168,8 +170,7 @@ class httphandler
       }
       else
       {
-
-        $nextPage = $auth->selfregister($this->postObject->username, $pwd);
+        $nextPage = $auth->selfregister($this->postObject->username, $this->postObject->password1);
         if(strtolower($nextPage) == 'index.php')
         {
           $headerString .= 'index.php?message=';
