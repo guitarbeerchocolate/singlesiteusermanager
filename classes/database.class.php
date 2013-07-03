@@ -6,10 +6,6 @@ class database
 	function __construct()
 	{
 		$this->config = new config;
-		if(is_null($this->config->values->DB_PASSWORD) || empty($this->config->values->DB_PASSWORD) || !isset($this->config->values->DB_PASSWORD) || !property_exists($this->config, 'values->DB_PASSWORD'))
-		{
-			$this->config->values->DB_PASSWORD = '';
-		}
 		$this->connection = new mysqli($this->config->values->DB_HOST, $this->config->values->DB_USERNAME, $this->config->values->DB_PASSWORD, $this->config->values->DB_NAME);
 	}
 
