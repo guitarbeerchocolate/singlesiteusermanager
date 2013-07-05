@@ -150,7 +150,6 @@ class httphandler
   function selfregister()
   {
     $auth = new authenticate;
-    $session = new session;
     $nextPage = 'index.php';
     $headerString = 'Location:';
 
